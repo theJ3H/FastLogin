@@ -16,6 +16,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -68,7 +69,13 @@ public class ConnectListener implements Listener {
             session.setUuid(connection.getUniqueId());
 
             StoredProfile playerProfile = session.getProfile();
+            
+            //BC: Save profile, because no id is currently in db.
+            boolean shouldSave = playerProfile.getId() == null;
             playerProfile.setId(connection.getUniqueId());
+            if(shouldSave) {
+            	plugin.getCore().getStorage().save(playerProfile);
+            }
 
             //bungeecord will do this automatically so override it on disabled option
             if (!plugin.getCore().getConfig().get("premiumUuid", true)) {
@@ -93,6 +100,16 @@ public class ConnectListener implements Listener {
                 }
             }
         }
+    }
+    
+    //BC: Remove player from pendinglogin, when he reaches postlogin
+    // If the player is premium this will only happen when he successfully
+    // logs in using mojang session.
+    @EventHandler
+    public void onPostLogin(PostLoginEvent event) {
+    	String ip = event.getPlayer().getPendingConnection().getAddress().getAddress().getHostAddress();
+        plugin.getCore().getPendingLogin().remove(ip + event.getPlayer().getName());
+        
     }
 
     @EventHandler

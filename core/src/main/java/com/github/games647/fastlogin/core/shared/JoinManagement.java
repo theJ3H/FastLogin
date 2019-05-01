@@ -30,21 +30,27 @@ public abstract class JoinManagement<P extends C, C, S extends LoginSource> {
         String ip = source.getAddress().getAddress().getHostAddress();
         profile.setLastIp(ip);
         try {
-            if (profile.isSaved()) {
+           
+        	//BC: If a player is premium and doesnt have a uuid in db, he hasnt joined successfully as a premium yet.
+        	//If he joins unsuccessfully after using /premium he will be set to cracked the second time he joins.
+        	if (core.getPendingLogin().remove(ip + username) != null && config.get("secondAttemptCracked", false)) {
+        		if(profile.isPremium() && profile.getId() == null) {
+	                core.getPlugin().getLog().info("Second attempt login -> cracked {}", username);
+	
+	                //first login request failed so make a cracked session
+	                startCrackedSession(source, profile, username);
+	                return;
+        		}
+            }
+        	
+        	if (profile.isSaved()) {
                 if (profile.isPremium()) {
                     requestPremiumLogin(source, profile, username, true);
                 } else {
                     startCrackedSession(source, profile, username);
                 }
             } else {
-                if (core.getPendingLogin().remove(ip + username) != null && config.get("secondAttemptCracked", false)) {
-                    core.getPlugin().getLog().info("Second attempt login -> cracked {}", username);
-
-                    //first login request failed so make a cracked session
-                    startCrackedSession(source, profile, username);
-                    return;
-                }
-
+                
                 Optional<Profile> premiumUUID = Optional.empty();
                 if (config.get("nameChangeCheck", false) || config.get("autoRegister", false)) {
                     premiumUUID = core.getResolver().findProfile(username);
