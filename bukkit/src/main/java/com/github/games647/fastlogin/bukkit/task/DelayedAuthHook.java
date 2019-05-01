@@ -1,14 +1,5 @@
 package com.github.games647.fastlogin.bukkit.task;
 
-import com.github.games647.fastlogin.bukkit.FastLoginBukkit;
-import com.github.games647.fastlogin.bukkit.hook.AuthMeHook;
-import com.github.games647.fastlogin.bukkit.hook.CrazyLoginHook;
-import com.github.games647.fastlogin.bukkit.hook.LogItHook;
-import com.github.games647.fastlogin.bukkit.hook.LoginSecurityHook;
-import com.github.games647.fastlogin.bukkit.hook.UltraAuthHook;
-import com.github.games647.fastlogin.bukkit.hook.xAuthHook;
-import com.github.games647.fastlogin.core.hooks.AuthPlugin;
-
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +7,14 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+
+import com.github.games647.fastlogin.bukkit.FastLoginBukkit;
+import com.github.games647.fastlogin.bukkit.hook.AuthMeHook;
+import com.github.games647.fastlogin.bukkit.hook.CrazyLoginHook;
+import com.github.games647.fastlogin.bukkit.hook.LogItHook;
+import com.github.games647.fastlogin.bukkit.hook.UltraAuthHook;
+import com.github.games647.fastlogin.bukkit.hook.xAuthHook;
+import com.github.games647.fastlogin.core.hooks.AuthPlugin;
 
 public class DelayedAuthHook implements Runnable {
 
@@ -70,7 +69,7 @@ public class DelayedAuthHook implements Runnable {
         try {
             @SuppressWarnings("unchecked")
             List<Class<? extends AuthPlugin<Player>>> hooks = Arrays.asList(AuthMeHook.class,
-                    CrazyLoginHook.class, LogItHook.class, LoginSecurityHook.class, UltraAuthHook.class,
+                    CrazyLoginHook.class, LogItHook.class, UltraAuthHook.class,
                     xAuthHook.class);
 
             for (Class<? extends AuthPlugin<Player>> clazz : hooks) {
