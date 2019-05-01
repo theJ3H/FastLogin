@@ -59,6 +59,11 @@ public class AsyncToggleMessage implements Runnable {
         playerProfile.setPremium(true);
         core.getStorage().save(playerProfile);
         sendMessage("add-premium");
+        
+        //BC: Disconnect player after using /premium
+        ProxiedPlayer pp = ProxyServer.getInstance().getPlayer(playerProfile.getName());
+        if(pp != null)
+        	pp.disconnect(new TextComponent("Verbinde dich erneut, um Premium zu aktivieren."));
     }
 
     private void sendMessage(String localeId) {
